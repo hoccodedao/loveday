@@ -1,29 +1,63 @@
-$(function() {
-    var ngayhenho="19-03-2025"; 
-    setInterval(() => {
-        let e=ngayhenho.split("-"),
-            n=new Date(`${e[2]}-${e[1]}-${e[0]}`),
-            o=new Date - n;
-        $("#wus-ngay").text(Math.floor(o / 864e5));
-        $("#wus-gio").text(Math.floor(o % 864e5 / 36e5));
-        $("#wus-phut").text(Math.floor(o % 36e5 / 6e4));
-        $("#wus-giay").text(Math.floor(o % 6e4 / 1e3));
-    }, 1000);
+$(function () {
+  var ngayhenho = "19-03-2025"; // dd-mm-yyyy
+
+  const loichuc = [
+    "Chúc mừng 50 ngày hạnh phúc cùng nhau! ❤️",
+    "100 ngày yêu nhau thật ngọt ngào! 🥰",
+    "Tròn 1 năm bên nhau rồi đó! 💖",
+    "2 năm tuyệt vời cùng nhau! Mãi bên nhau nhé! 💞",
+    "Mỗi ngày bên em là một món quà! 🎁"
+  ];
+
+  const mocDacBiet = [50, 100, 365, 730];
+
+  function hienLoiChucRandom(text) {
+    const loiChuc = loichuc[Math.floor(Math.random() * loichuc.length)];
+    const popup = `
+      <div class="popup_notify_out display-block" style="display:none;">
+        <div class="popup_notify">
+          <span class="close-popup" style="cursor:pointer;position:absolute;top:10px;right:20px;font-size:20px;">×</span>
+          <p style="font-size:20px;padding:20px;text-align:center;">${text}<br><strong>${loiChuc}</strong></p>
+        </div>
+      </div>
+    `;
+    $('body').append(popup);
+    $('.popup_notify_out').fadeIn();
+    $('.close-popup').click(function () {
+      $('.popup_notify_out').fadeOut().remove();
+    });
+  }
+
+  function updateTime() {
+      let [day, month, year] = ngayhenho.split("-");
+      let targetDate = new Date(`${year}-${month}-${day}T00:00:00`);
+      let now = new Date();
+      let diff = now - targetDate;
+
+      if (diff < 0) diff = 0;
+
+      let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      let hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      $("#wus-ngay").text(days);
+      $("#wus-gio").text(hours);
+      $("#wus-phut").text(minutes);
+      $("#wus-giay").text(seconds);
+
+      // Kiểm tra ngày đặc biệt
+      if (mocDacBiet.includes(days)) {
+        if (!$('.popup_notify_out').length) {
+          hienLoiChucRandom(`Hôm nay là ngày thứ <strong>${days}</strong> kể từ ngày hẹn hò!`);
+        }
+      }
+  }
+
+  setInterval(updateTime, 1000);
+  updateTime(); // gọi lần đầu
 });
-$(function() {
-    setInterval(function () {
-        const heart=$('<div>').addClass('heart-fall');
-        heart.css({
-            'left': Math.random() * 100 + 'vw',
-            'animation-duration': Math.random() * 2 + 3 + 's'
-        });
-        heart.text('🌸');
-        $('body').append(heart);
-        setTimeout(function () {
-            heart.remove();
-        }, 5000);
-    }, 300);
-});
+// HIỂN THỊ NGÀY THÁNG NĂM  
 $(function() {
     const backgrounds=['./public/src/img/bg.jpg',];
     function RandomBackground() {
